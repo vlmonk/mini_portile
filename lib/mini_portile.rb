@@ -225,7 +225,14 @@ private
     FileUtils.mkdir_p target
 
     message "Extracting #{filename} into #{target}... "
-    result = `#{tar_exe} xf #{file} -C #{target} 2>&1`
+
+    options = case file
+              when /(\.tar\.gz|\.tgz)$/         then 'zxf'
+              when /(\.tar\.bz2|\.tbz2|\.tb2)$/ then 'jxf'
+              else 'xf'
+              end
+
+    result = `#{tar_exe} #{options} #{file} -C #{target} 2>&1`
     if $?.success?
       output "OK"
     else
